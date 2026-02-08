@@ -29,29 +29,29 @@ A distributed microservices-based booking platform built with Java 17, Spring Bo
 ## Java Design Patterns & OOP Principles (Throughout Project)
 
 ### Design Patterns (GoF & Microservices)
-
-| Pattern | Category | Usage | Example |
-|---------|----------|-------|---------|
-| **Microservices** | Architectural | Service per domain (User, Listing, Booking, etc.) | Independent services with separate databases |
-| **Saga** | Behavioral | Multi-step distributed transactions | Booking → Payment → Confirmation with compensation |
-| **CQRS** | Architectural | Command Query Responsibility Separation | BookingService writes events, separate read models |
-| **Event Sourcing** | Behavioral | Immutable event log for audit trail | Kafka topics as event store, replay for recovery |
-| **Repository** | Structural | Abstract data access layer | Spring Data JPA repositories |
-| **DTO** | Structural | Data transfer objects using Records | `record BookingDTO(Long id, LocalDate checkIn) {}` |
-| **Circuit Breaker** | Behavioral | Fault tolerance for external calls | Resilience4j for Stripe payment integration |
-| **Retry** | Behavioral | Transient failure handling | 3 attempts with exponential backoff |
-| **Timeout** | Behavioral | Prevent hanging requests | 5-second timeout for API calls |
-| **Bulkhead** | Behavioral | Thread pool isolation | Separate pools for payment vs notification |
-| **Observer** | Behavioral | Event listener pattern | Kafka consumers for async events |
-| **Strategy** | Behavioral | Switchable algorithms | PaymentGateway (Stripe, Mock implementations) |
-| **Adapter** | Structural | Interface translation | MockPaymentGateway adapts to PaymentGateway interface |
-| **Decorator** | Structural | Add behavior dynamically | Resilience4j decorators wrapping service calls |
-| **Factory** | Creational | Object creation abstraction | BookingDTOFactory for complex DTO creation |
-| **Builder** | Creational | Complex object construction | Fluent API for building queries or requests |
-| **Template Method** | Behavioral | Skeleton algorithm definition | BaseService with common transaction logic |
-| **State** | Behavioral | State-dependent behavior | Booking (PENDING, CONFIRMED, CANCELLED) |
-| **Distributed Locking** | Concurrency | Atomicity across instances | Redis NX/EX for availability reservation |
-| **Optimistic Locking** | Concurrency | Version-based conflict detection | DB version field in Availability table |
+______________________________________________________________________________________________________________________________________________
+| Pattern                 | Category      | Usage                                    | Example                                               |
+|-------------------------|---------------|------------------------------------------|-------------------------------------------------------|
+| **Microservices**       | Architectural | Service per domain (User, Listing, etc.) | Independent services with separate databases          |
+| **Saga**                | Behavioral    | Multi-step distributed transactions      | Booking → Payment → Confirmation with compensation    |
+| **CQRS**                | Architectural | Command Query Responsibility Separation  | BookingService writes events, separate read models    |
+| **Event Sourcing**      | Behavioral    | Immutable event log for audit trail      | Kafka topics as event store, replay for recovery      |
+| **Repository**          | Structural    | Abstract data access layer               | Spring Data JPA repositories                          |
+| **DTO**                 | Structural    | Data transfer objects using Records      | `record BookingDTO(Long id, LocalDate checkIn) {}`    |
+| **Circuit Breaker**     | Behavioral    | Fault tolerance for external calls       | Resilience4j for Stripe payment integration           |
+| **Retry**               | Behavioral    | Transient failure handling               | 3 attempts with exponential backoff                   |
+| **Timeout**             | Behavioral    | Prevent hanging requests                 | 5-second timeout for API calls                        |
+| **Bulkhead**            | Behavioral    | Thread pool isolation                    | Separate pools for payment vs notification            |
+| **Observer**            | Behavioral    | Event listener pattern                   | Kafka consumers for async events                      |
+| **Strategy**            | Behavioral    | Switchable algorithms                    | PaymentGateway (Stripe, Mock implementations)         |
+| **Adapter**             | Structural    | Interface translation                    | MockPaymentGateway adapts to PaymentGateway interface |
+| **Decorator**           | Structural    | Add behavior dynamically                 | Resilience4j decorators wrapping service calls        |
+| **Factory**             | Creational    | Object creation abstraction              | BookingDTOFactory for complex DTO creation            |
+| **Builder**             | Creational    | Complex object construction              | Fluent API for building queries or requests           |
+| **Template Method**     | Behavioral    | Skeleton algorithm definition            | BaseService with common transaction logic             |
+| **State**               | Behavioral    | State-dependent behavior                 | Booking (PENDING, CONFIRMED, CANCELLED)               |
+| **Distributed Locking** | Concurrency   | Atomicity across instances               | Redis NX/EX for availability reservation              |
+| **Optimistic Locking**  | Concurrency   | Version-based conflict detection         | DB version field in Availability table                |
 
 ### OOP Principles Applied
 
@@ -229,18 +229,18 @@ List<Listing> results = listings.parallelStream()
 ```
 
 ### Data Structure Selection
-
-| Use Case | Data Structure | Why |
-|----------|---|---|
-| **Cache with concurrent access** | `ConcurrentHashMap` | Thread-safe, no locking overhead |
-| **Session tokens** | `ConcurrentHashMap<String, TokenMetadata>` | Fast lookup, concurrent put/get |
-| **Lock tracking** | `ConcurrentHashMap<String, ReservationId>` | Atomic operations (putIfAbsent) |
-| **Ordered reservations** | `LinkedHashMap` or `LinkedList` | FIFO order preservation |
-| **Unique values** | `HashSet` or `TreeSet` | No duplicates, O(1) contains check |
-| **Sorted operations** | `TreeMap` or `TreeSet` | Ordered access, range queries |
-| **Large result sets** | `Stream<T>` | Lazy evaluation, memory efficient |
-| **Pending notifications** | `Queue<Notification>` | FIFO processing guarantee |
-| **Multi-key lookups** | `Map<String, Map<String, Value>>` | Or custom key class with equals/hashCode |
+____________________________________________________________________________________________________________________________
+| Use Case                         | Data Structure                             | Why                                      |
+|----------------------------------|--------------------------------------------|------------------------------------------|
+| **Cache with concurrent access** | `ConcurrentHashMap`                        | Thread-safe, no locking overhead         |
+| **Session tokens**               | `ConcurrentHashMap<String, TokenMetadata>` | Fast lookup, concurrent put/get          |
+| **Lock tracking**                | `ConcurrentHashMap<String, ReservationId>` | Atomic operations (putIfAbsent)          |
+| **Ordered reservations**         | `LinkedHashMap` or `LinkedList`            | FIFO order preservation                  |
+| **Unique values**                | `HashSet` or `TreeSet`                     | No duplicates, O(1) contains check       |
+| **Sorted operations**            | `TreeMap` or `TreeSet`                     | Ordered access, range queries            |
+| **Large result sets**            | `Stream<T>`                                | Lazy evaluation, memory efficient        |
+| **Pending notifications**        | `Queue<Notification>`                      | FIFO processing guarantee                |
+| **Multi-key lookups**            | `Map<String, Map<String, Value>>`          | Or custom key class with equals/hashCode |
 
 ### Java Memory Model & GC Optimization
 
