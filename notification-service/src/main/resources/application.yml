@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: notification-service
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: notification-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
+server:
+  port: 8006
+  servlet:
+    context-path: /api
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+  tracing:
+    sampling:
+      probability: 1.0
+
+springdoc:
+  api-docs:
+    path: /docs
+  swagger-ui:
+    path: /swagger-ui.html

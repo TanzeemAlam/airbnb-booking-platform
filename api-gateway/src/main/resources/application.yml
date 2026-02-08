@@ -1,0 +1,77 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: http://localhost:8001
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        
+        - id: listing-service
+          uri: http://localhost:8002
+          predicates:
+            - Path=/api/listings/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        
+        - id: availability-service
+          uri: http://localhost:8003
+          predicates:
+            - Path=/api/availability/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        
+        - id: booking-service
+          uri: http://localhost:8004
+          predicates:
+            - Path=/api/bookings/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        
+        - id: payment-service
+          uri: http://localhost:8005
+          predicates:
+            - Path=/api/payments/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        
+        - id: notification-service
+          uri: http://localhost:8006
+          predicates:
+            - Path=/api/notifications/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+  
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
+server:
+  port: 8000
+  servlet:
+    context-path: /
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+  tracing:
+    sampling:
+      probability: 1.0
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html

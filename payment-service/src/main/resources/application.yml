@@ -1,0 +1,83 @@
+spring:
+  application:
+    name: payment-service
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/airbnb_payment_service?useSSL=false&serverTimezone=UTC
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: payment-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
+server:
+  port: 8005
+  servlet:
+    context-path: /api
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+  tracing:
+    sampling:
+      probability: 1.0
+
+springdoc:
+  api-docs:
+    path: /docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      stripePaymentClient:
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 60000
+        permitted-number-of-calls-in-half-open-state: 3
+        register-health-indicator: true
+  retry:
+    instances:
+      stripePaymentClient:
+        max-attempts: 3
+        wait-duration: 1000
+        retry-exceptions:
+          - java.io.IOException
+          - com.stripe.exception.StripeException
+  timelimiter:
+    instances:
+      stripePaymentClient:
+        timeout-duration: 5s
+  bulkhead:
+    instances:
+      stripePaymentClient:
+        max-concurrent-calls: 100
+        max-wait-duration: 10ms
